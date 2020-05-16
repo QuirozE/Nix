@@ -1,31 +1,40 @@
 package com.naat.nix.user.model;
 
-import com.naat.nix.user.model.Admin;
-import com.naat.nix.user.model.Client;
-import com.naat.nix.user.model.DeliveryMan;
-import org.hibernate.annotations.NotFound;
-import org.hibernate.annotations.NotFoundAction;
-import javax.persistence.Transient;
-import javax.persistence.OneToOne;
 import javax.persistence.Column;
-import javax.persistence.Table;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import lombok.Data;
-import java.util.List;
+import javax.persistence.OneToOne;
+import javax.persistence.Table;
+import javax.persistence.Transient;
 
+import org.hibernate.annotations.NotFound;
+import org.hibernate.annotations.NotFoundAction;
+
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+
+/**
+ * Entity representing users of our system. Extends UserDetails to use with
+ * Spring Security.
+ */
 @Data
 @Entity
+@NoArgsConstructor
+@RequiredArgsConstructor
 @Table(name = "Usuario")
 public class User {
 
   @Id
+  @NonNull
   @Column(name = "correo")
   private String email;
 
   @Column(name = "nombre")
   private String username;
 
+  @NonNull
   @Column(name = "contraseña")
   private String password;
 
@@ -43,6 +52,4 @@ public class User {
   @OneToOne(mappedBy = "user")
   @NotFound(action=NotFoundAction.IGNORE)
   private DeliveryMan deliveryMan;
-
-
 }

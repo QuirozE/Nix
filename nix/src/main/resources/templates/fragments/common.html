@@ -2,57 +2,77 @@
 
 <html xmlns:th="http://www.thymeleaf.org">
 
-<head>
-  <title>Componentes comunes</title>
+<!-- Cargando bootstraps -->
+<head th:fragment="head">
+
+  <title>Nix</title>
+
+  <!-- CSS -->
+  <link
+    rel="stylesheet"
+    href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css"
+  >
+
+  <!-- JQuery JS -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  
+  <!-- Popper JS -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  
+  <!-- Bootstrap -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
 </head>
 
 <body>
   <!-- Barra de navegacion  -->
-	<nav class="navbar navbar-expand-sm bg-dark navbar-dark" th:fragment= "navbar">
+	<nav class="navbar bg-dark" th:fragment= "navbar">
 
     <a class="navbar-brand" href="/">Nix</a>
-      <div class="container">
 
+    <div class="container">
 
-	  	<form class="form-inline" action="/action_page.php">
-	    	<input class="form-control mr-sm-2" type="text" placeholder="Ingresa tu busqueda" width= 100>
-	    	<button class="btn btn-success" type="submit">Buscar</button>
-	  	</form>
-		 <ul class="nav nav-pills">
+      <!-- Barra de búsqueda -->
+      <form class="form-inline" action="#">
+        <input class="form-control mr-sm-2" type="text" placeholder="Ingresa tu busqueda" width= 100>
+        <button class="btn btn-success" type="submit">Buscar</button>
+      </form>
+      
+      <ul class="nav nav-pills">
 
-		  <li class="nav-item dropdown">
-		    <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="" >Categorias</a>
-		    <div class="dropdown-menu">
-		      <a class="dropdown-item" href="#">Categoria 1</a>
-		      <a class="dropdown-item" href="#">Categoria 2</a>
-		      <a class="dropdown-item" href="#">Categoria 3</a>
-		    </div>
-		  </li>
-
-		  <li class="nav-item">
-		    <a class="nav-link" href="/pedidos/ver">Pedidos</a>
-		  </li>
-
-		  <li class="nav-item">
-		    <a class="nav-link" href="/carrito/ver">Carrito</a>
-		  </li>
-
-      <li class="nav-item dropdown">
-        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="" >Usuario</a>
-        <div class="dropdown-menu">
-          <a class="dropdown-item" href="/perfil/ver">Perfil</a>
-          <a class="dropdown-item" href="/logout">Salir</a>
+        <div class="nav-item" sec:authorize="hasRole('CLIENT')">
+          <a class="nav-link" href="/menu">Menú</a>
         </div>
-      </li>
 
-		</ul>
-	</div>
+        
+        <div class="nav-item" sec:authorize="hasRole('ADMIN')">
+          <a class="nav-link" href="/signup/delivery">Registrar repartidor</a>
+        </div>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/orders">Pedidos</a>
+        </li>
+
+        <li class="nav-item" sec:authorize="hasRole('CLIENT')">
+          <a class="nav-link" href="/carrito/ver">Carrito</a>
+        </li>
+
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="" >Usuario</a>
+          <div class="dropdown-menu">
+            <a class="dropdown-item" href="#">Perfil</a>
+            <a class="dropdown-item" href="/logout">Salir</a>
+          </div>
+        </li>
+
+      </ul>
+    </div>
 	</nav>
 
 
   <!-- Popup para confirmar alguna accion
-       ${aceptar} el url al cual se redirige despues de presionar el boton de Aceptar
-    -->
+    ${aceptar} el url al cual se redirige despues de presionar el boton de Aceptar
+  -->
   <div class="container" th:fragment = "confirmar-popup">
     <!-- Modal -->
     <div class="modal fade" id="confirmar">
@@ -81,63 +101,46 @@
 
   </div>
 
+  <!-- Cuerpo de la tarjeta de órdenes -->
+  <div class="card-body" th:fragment="ordercard_body">
+    <h5 class="card-title" th:text="${order.status}"></h5>
+    <p class="card-text" th:text="'Fecha de entrega: ' + ${order.deliveryDate}"></p>
+    <p class="card-text" th:text="'Total: $' + ${order.price}"></p>
+    <p>Platillos: </p>
+    <ul>
+      <li th:each="food : ${order.food_items}"
+        th:text="${food.nombre} + ': ' + ${food.descripcion}"></li>
+    </ul>
+  </div>
+  <!-- /Cuerpo de la tarjeta de órdenes -->
 
+  <!-- Tarjera para mostrar órdenes sin opciones -->
+  <div class="card" style="min-width: 300px; max-width: 300px; height: 300px;overflow: scroll;"
+    th:fragment="end_ordercard">
 
-  <!-- En desarrollo, lista genérica para mostrar elementos -->
-  <b-card-group deck th:fragment="options">
-    <b-card title="Platillo1" style="width: 50%;">
-      <b-card-text>
-        Comida
-      </b-card-text>
-    </b-card>
+    <div th:replace="::ordercard_body"></div>
 
-    <b-card title="Platillo2">
-      <b-card-text>
-        Comida
-      </b-card-text>
-    </b-card>
+  </div>
+  <!--/ Tarjeta para mostrar órdenes sin opciones -->
 
-    <b-card title="Platillo3">
-      <b-card-text>
-        Comida
-      </b-card-text>
-    </b-card>
+  <!-- Tarjera para mostrar órdenes para seleccionar -->
+  <div class="card" style="min-width: 300px; max-width: 300px; height: 300px;overflow: scroll;"
+    th:fragment="select_ordercard">
+    <div class="card-header">
+      <a th:href="@{'orders/select/' + ${order.id}}" class="card-link">Seleccionar</a>
+    </div>
+    <div th:replace="::ordercard_body"></div>
+  </div>
+  <!--/ Tarjeta para mostrar órdenes para seleccionar -->
 
-    <b-card title="Platillo4">
-      <b-card-text>
-        Comida
-      </b-card-text>
-    </b-card>
-
-    <b-card title="Platillo5">
-      <b-card-text>
-        Comida
-      </b-card-text>
-    </b-card>
-
-    <b-card title="Platillo3">
-      <b-card-text>
-        Comida
-      </b-card-text>
-    </b-card>
-
-    <b-card title="Platillo3">
-      <b-card-text>
-        Comida
-      </b-card-text>
-    </b-card>
-  </b-card-group>
-
-  <b-card no-body th:fragment="menu">
-    <b-tabs card vertical>
-      <b-tab title="Car 2">
-        <div style="overflow-x: scroll;" th:insert="::options"></div>
-      </b-tab>
-      <b-tab title="Cat3">
-        <div style="overflow-x: scroll;" th:insert="::options"></div>
-      </b-tab>
-    </b-tabs>
-  </b-card>
-</body>
+  <!-- Tarjera para mostrar órdenes para alterar el estatus -->
+  <div class="card" style="min-width: 300px; max-width: 300px; height: 300px;overflow: scroll;"
+    th:fragment="change_ordercard">
+    <div class="card-header">
+      <a th:href="@{'orders/update/' + ${order.id}}" class="card-link">Avanzar estatus</a>
+    </div>
+    <div th:replace="::ordercard_body"></div>
+  </div>
+  <!--/ Tarjeta para mostrar órdenes para alterar el estatus -->
 
 </html>

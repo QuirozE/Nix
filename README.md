@@ -10,7 +10,31 @@ Sitio web para órdenes de comida.
 
 En su versión de desarrollo, sólo requiere [_JDK11+_][jdk].
 
-Para la versión de producción, además de _JDK11+_, requiere tener una instancia de [_MySQL_][mysql] corriendo.
+Para la versión de producción, además de _JDK11+_, requiere tener una instancia de [_MySQL_][mysql] corriendo, con una base de datos vacía.
+
+Esta requiere que las credenciales estén configuradas como variables de ambiente.
+
+En Linux esto se logra
+
+```console
+$ export <VAR>="<value>"
+...
+```
+
+Y en Windows
+
+```powershell
+> setx <VAR> "<value>"
+```
+
+Se requieren de tres variables.
+
+* `SPRING_DATASOURCE_URL`: la dirección, puerto, y nombre donde está corriendo la base de datos.
+  Por omisión, es de la forma `jdbc:mysql://localhost:3306/<db_name>`.
+
+* `SPRING_USERNAME`: usuario de la base de datos.
+
+* `SPRING_PASS`: contraseña del usuario de la base de datos.
 
 ## Correr
 

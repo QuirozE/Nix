@@ -24,13 +24,14 @@ dependencies {
 	// Wait until users are implemented
 	implementation 'org.springframework.boot:spring-boot-starter-security'
 	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	compile group: 'org.thymeleaf.extras', name: 'thymeleaf-extras-springsecurity5', version: '3.0.4.RELEASE'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	compileOnly 'org.projectlombok:lombok'
 	// MySQL for production
-	runtimeOnly 'mysql:mysql-connector-java'
+	//runtimeOnly 'mysql:mysql-connector-java'
 	compile group: 'javax.validation', name: 'validation-api', version: '2.0.1.Final'
 	// H2 for development
-	// runtimeOnly 'com.h2database:h2'
+	runtimeOnly 'com.h2database:h2'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation('org.springframework.boot:spring-boot-starter-test') {
 		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'

@@ -6,6 +6,7 @@ import com.naat.nix.user.model.User;
 import com.naat.nix.validator.UserValidator;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -46,5 +47,28 @@ public class SigUpController {
           securityService.autoLogin(user.getUsername(), user.getPassword());
 
           return "redirect:/";
+      }
+      
+      @GetMapping("/signup/delivery")
+      @Secured("ROLE_ADMIN")
+      public String deliveryRegistration(Model model) {
+        model.addAttribute("delivery", new User());
+        return "delivery_signup";
+      }
+
+      @PostMapping("signup/delivery")
+      @Secured("ROLE_ADMIN")
+      public String deliveryRegistration(@ModelAttribute @Valid User user, BindingResult result) {
+        userValidator.validate(user, result);
+
+        if(result.hasErrors()) {
+          return "delivery_signup";
+        }
+
+        userService.saveUser(user);
+
+        userService.newDelivery(user);
+
+        return "redirect:/";
       }
 }

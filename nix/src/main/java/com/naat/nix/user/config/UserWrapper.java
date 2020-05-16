@@ -11,6 +11,8 @@ import lombok.Setter;
 public class UserWrapper extends User {
   private static final long serialVersionUID = 1L;
 
+  @Getter
+  @Setter
   private com.naat.nix.user.model.User customUser;
 
   public UserWrapper(com.naat.nix.user.model.User user, String username,
@@ -18,14 +20,4 @@ public class UserWrapper extends User {
     super(username, password, authorities);
     this.customUser = user;
   }
-
-  public com.naat.nix.user.model.User getCustomUser(){
-    return this.customUser;
-  }
-
-  public void setCustomUser (com.naat.nix.user.model.User user) {
-    this.customUser = user;
-  }
-
-
 }

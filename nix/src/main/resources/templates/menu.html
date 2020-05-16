@@ -1,0 +1,87 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+
+<html xmlns:th="http://www.thymeleaf.org" >
+
+<head th:replace="fragments/common::head"></head>
+
+<body>
+
+	<!-- Barra de navegacion  -->
+	<div th:insert="fragments/common :: navbar"></div>
+
+  <h3 style="padding: 2rem;">Menú</h3>
+  <div class="card-deck" style="overflow: scroll; padding: 1rem;">
+
+    <tr th:each="platillo : ${menu}">
+
+    <div class="card" style="padding: 2rem; min-width: 300px;">
+      <img class="card-img-top" src="..." alt="Imagen" >
+        <div class="card-body">
+          <h5 class="card-title" th:text="${platillo.nombre}"></h5>
+          <p class="card-text" th:utext="${platillo.descripcion}"></p>
+          <p class="card-text" th:utext="${platillo.categoria.categoria}"></p>
+          <p class="card-text" th:utext="'$' + ${platillo.precio}"></p>
+          <button class="btn btn-primary stretched-link" data-toggle="modal"
+                  data-target="#agregarCarrito"
+                  th:attr="data-nombre=${platillo.nombre},
+                  data-descripcion=${platillo.descripcion},
+                  data-id=${platillo.idPlatillo},
+                  data-precio=${platillo.precio},
+                  data-foto=${platillo.foto}">Ver mas</button>
+        </div>
+    </div>
+
+    </tr>
+
+  </div>
+
+
+
+  <div class="container">
+    <!-- Modal -->
+    <div class="modal fade" id="agregarCarrito" aria-labelledby="agregarCarrito">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+          <!-- Modal Header -->
+          <div class="modal-header">
+            <h1 class="modal-title"> Platillo </h1>
+          </div>
+
+          <!-- Modal body -->
+          <div class="modal-body">
+            <h6 class="modal-descripcion"> Descripcion </h6>
+            <h6 class="modal-precio"> Precio </h6>
+          </div>
+
+          <!-- Modal footer -->
+          <div class="modal-footer">
+            <a class="btn btn-secondary" data-dismiss="modal" > Cerrar </a>
+            <a class="btn btn-success" id="verPlatillo" href = "/carrito/agregar/"> Agregar al carrito </a>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+</body>
+
+<script>
+$('#agregarCarrito').on('show.bs.modal', function (event) {
+  var button = $(event.relatedTarget)
+  var nombre = button.data('nombre')
+  var id = button.data('id')
+  var descripcion = button.data('descripcion')
+  var precio = button.data('precio')
+  document.getElementById("verPlatillo").href= "/carrito/agregar/" + id.toString()
+  var modal = $(this)
+  modal.find('.modal-title').text(nombre)
+  modal.find('.modal-descripcion').text("Descripcion: " + descripcion)
+  modal.find('.modal-precio').text("Precio: " + precio)
+})
+</script>
+
+</html>

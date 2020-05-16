@@ -1,11 +1,11 @@
-  package com.naat.nix.validator;
+package com.naat.nix.validator;
 
-import com.naat.nix.user.model.User;
 import com.naat.nix.user.controller.UserService;
+import com.naat.nix.user.model.User;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
-import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 @Component
@@ -23,7 +23,9 @@ public class UserValidator implements Validator {
     public void validate (Object o, Errors errors) {
         User user = (User) o;
 
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "username", "Ingresa un nombre");
+        if (user.getUsername() == null || user.getUsername().length() == 0) {
+            errors.rejectValue("username", "NotEmpty");
+        }
         if (user.getUsername().length() < 6 || user.getUsername().length() > 32) {
             errors.rejectValue("username", "Size.userForm.username");
         }
@@ -31,9 +33,17 @@ public class UserValidator implements Validator {
             errors.rejectValue("username", "Duplicate.userForm.username");
         }
         if (userService.findByEmail(user.getEmail()) != null) {
-            errors.rejectValue("email", "Duplicate.userForm.username");
+            errors.rejectValue("email", "Duplicate.userForm.email");
         }
-        ValidationUtils.rejectIfEmptyOrWhitespace(errors, "password", "Debes ingresar una contraseña");
+        if (user.getEmail() == null || user.getEmail().length() == 0 ) {
+            errors.rejectValue("email", "NotEmptyEmail");
+        }
+        if (user.getPassword() == null || user.getPassword().length() == 0) {
+            errors.rejectValue("password", "NotEmptyPassword");
+        }
+        if (user.getPasswordConfirm() == null || user.getPasswordConfirm().length() == 0) {
+            errors.rejectValue("passwordConfirm", "NotEmptyPassword");
+        }
         if (user.getPassword().length() < 7 || user.getPassword().length() > 32) {
             errors.rejectValue("password", "Size.userForm.password");
         }
